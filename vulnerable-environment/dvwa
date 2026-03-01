@@ -1,0 +1,29 @@
+server {
+	listen 80;
+	server_name 10.147.165.11;
+	modsecurity on;
+	modsecurity_rules_file /etc/nginx/modsec/modsecurity.conf;
+	
+	root /var/www/html/dvwa;
+	index index.php index.html index.htm;
+
+	location / {
+		try_files $uri $uri/ /index.php?$query_string;
+	}
+
+
+	location ~ \.php$ {
+		include snippets/fastcgi-php.conf;
+		fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+ 
+
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_param PATH_INFO $fastcgi_path_info;
+		
+		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		include fastcgi_params;
+	}
+	location ~ ^/(config|external|hackable|\.git) {
+		deny all;
+	}
+}
