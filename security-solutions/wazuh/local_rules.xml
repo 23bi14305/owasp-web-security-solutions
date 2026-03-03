@@ -1,0 +1,27 @@
+ # /var/ossec/etc/rules/local_rules.xml  
+ 
+ <group name="web,custom_owasp,xss">
+  <rule id="100001" level="6">
+    <if_sid>31101,31105,31106,31108</if_sid>
+    <match type="pcre2">(?i)GET \/.*(script|img|iframe|onerror|alert)</match>
+    <description>XSS Reflected or DOM Detected</description>
+  </rule>
+
+  <rule id="100003" level="6">
+    <if_sid>31101,31105,31106,31108</if_sid>
+    <match type="pcre2">(?i)POST /.*(script|img|iframe|onerror|alert)</match>
+    <description>XSS Stored Detected</description>
+  </rule>
+
+  <rule id="100051" level="12" frequency="5" timeframe="60">
+    <if_matched_sid>100001</if_matched_sid>
+    <same_source_ip />
+    <description>Multiple XSS attacks detected - Triggering Active Response</description>
+  </rule>
+
+  <rule id="100052" level="12" frequency="5" timeframe="60">
+    <if_matched_sid>100003</if_matched_sid>
+    <same_source_ip />
+    <description>Multiple XSS attacks detected - Triggering Active Response</description>
+  </rule>
+</group>
